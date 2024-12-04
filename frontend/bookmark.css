@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    scroll-behavior: smooth;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@100;200;300;400;500;600;700&display=swap");
+.btn {
+    @apply cursor-pointer text-center rounded-md box-border border-none hover:bg-white px-6 py-3 font-medium shadow-md transition-all duration-300 outline -outline-offset-2 outline-2;
+}
+
+hr {
+    border-top-width: 1px;
+}
+
+.btn-purple {
+    @apply btn bg-bookmark-purple-300 text-white hover:text-bookmark-purple-300 outline-bookmark-purple-300;
+}
+
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+.btn-white {
+    @apply btn bg-bookmark-white text-bookmark-purple-300 outline-bookmark-white hover:outline-bookmark-purple-300;
+}
+
+.btn-red {
+    @apply btn bg-bookmark-red text-white hover:text-bookmark-red outline-bookmark-red shadow-bookmark-red/50;
+}
+
+.styled-input {
+    @apply bg-gray-200 text-gray-700 focus:outline-none border border-gray-300 rounded py-2 px-4 block w-full appearance-none;
+}
+
+.styled-checkbox {
+    @apply w-4 h-4 bg-gray-100 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600;
+    --shadow: 0 0 #0000;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-origin: border-box;
+    border-width: 1px;
+    display: inline-block;
+    flex-shrink: 0;
+    height: 1rem;
+    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    vertical-align: middle;
+    width: 1rem;
+}
+
+.styled-checkbox:checked {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 12'%3E%3Cpath stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M1 5.917 5.724 10.5 15 1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: .55em .55em;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+
+    background-color: currentColor;
+    background-position: 50%;
+    border-color: transparent;
+}
+
+
+.tooltip {
+    @apply absolute z-10 after:border-b-bookmark-grey bg-bookmark-grey text-white after:border-l-transparent after:border-r-transparent after:border-t-transparent after:content-['_'] after:absolute after:bottom-full after:left-1/2 after:-ml-[5px] after:border-[5px] after:border-solid whitespace-nowrap -bottom-12 opacity-0 transition-opacity left-1/2 w-auto -translate-x-1/2 rounded-md px-3 py-2 text-center;
+}
