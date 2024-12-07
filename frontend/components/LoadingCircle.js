@@ -2,14 +2,14 @@ import * as React from "react";
 
 export function LoadingCircle({ p }) {
   return (
-    <div className={p ? "" : "invisible"}>
+    <div className={p ? "" : "invisible hidden"}>
       <div
         role="status"
-        className="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2"
+        className=""
       >
         <svg
           aria-hidden="true"
-          className="w-8 h-8 mr-2 text-gray-200 dark:text-gray-600 fill-bookmark-purple-400 animate-spin"
+          className="w-12 h-12 mr-2 text-gray-200 dark:text-gray-600 fill-bookmark-purple-400 animate-spin"
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

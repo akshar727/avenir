@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
 import axios from "axios";
 
 // These two values should be a bit less than actual token lifetimes
@@ -21,6 +22,22 @@ const SIGN_IN_HANDLERS = {
       const response = await axios({
         method: "post",
         url: process.env.NEXTAUTH_BACKEND_URL + "auth/google/",
+        data: {
+          access_token: account["id_token"]
+        },
+      });
+      account["meta"] = response.data;
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+  "github": async (user, account, profile, email, credentials) => {
+    try {
+      const response = await axios({
+        method: "post",
+        url: process.env.NEXTAUTH_BACKEND_URL + "auth/github/",
         data: {
           access_token: account["id_token"]
         },
@@ -76,7 +93,22 @@ export const authOptions = {
         }
       }
     }),
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET
+    }),
   ],
+  events: {
+    async signOut(message) {
+      const response = await axios({
+        method: "post",
+        url: process.env.NEXTAUTH_BACKEND_URL + "auth/logout/",
+        data: {
+          token: message,
+        },
+      });
+    },
+  },
   callbacks: {
     async signIn({user, account, profile, email, credentials}) {
       if (!SIGN_IN_PROVIDERS.includes(account.provider)) return false;

@@ -34,7 +34,7 @@ export default function Page() {
     <div className="flex h-screen">
       <div className="w-1/2 relative md:block sm:hidden">
         <img
-          src="https://wallpapercat.com/w/full/0/9/4/777391-3840x2160-desktop-4k-pyramids-of-giza-wallpaper-photo.jpg"
+          src="/giza.jpg"
           className="h-screen w-full object-cover rounded-r-[10px]"
         />
         <div className="absolute top-0 left-0 w-full h-full rounded-r-[10px] bg-black opacity-20"></div>
@@ -59,7 +59,11 @@ export default function Page() {
             </Button>
           </div>
           <div className="mb-4 w-full">
-            <Button className="flex gh-btn items-center justify-center w-full text-slate-900 hover:bg-slate-900 hover:text-white border border-slate-900 rounded-[6px] h-[40px] bg-transparent">
+            <Button
+              onClick={() => signIn("github")}
+              type="button"
+              className="flex gh-btn items-center justify-center w-full text-slate-900 hover:bg-slate-900 hover:text-white border border-slate-900 rounded-[6px] h-[40px] bg-transparent"
+            >
               <img
                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1200px-Octicons-mark-github.svg.png"
                 className="w-6 h-6 transition-colors duration-200"
@@ -79,7 +83,7 @@ export default function Page() {
             <div className="text-center">
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 text-left"
+                className="block text-sm font-inter font-medium text-gray-700 text-left"
               >
                 Email
               </label>
@@ -97,7 +101,7 @@ export default function Page() {
             <div className="flex w-full justify-between items-center">
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 text-left"
+                className="block text-sm font-inter font-medium text-gray-700 text-left"
               >
                 Password
               </label>

@@ -25,6 +25,9 @@ SECRET_KEY = "django-insecure-z6dh*i8cjajq$o6lg-@$%3v06vpl!irr9+v0=+d&5d$f#-(&#t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media/"
+
 ALLOWED_HOSTS = []
 
 # set the user model
@@ -129,6 +132,7 @@ else:
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000/",
         "http://127.0.0.1:3000/",
+        "https://super-funicular-677w567j5vpcrgr6-3000.app.github.dev/",
     ]
 
 
@@ -164,6 +168,16 @@ SOCIALACCOUNT_PROVIDERS = {
         },
         "VERIFIED_EMAIL": True,
     },
+    "github": {
+        "APP": {
+            "client_id": "Ov23lisaim5V9n507SXU",
+            "client_secret": "c5daf6fa9305fa168a258086db13e59a31fd00a5",
+            "key": "",
+        },
+        'SCOPE': [
+            'user'
+            ],
+    }
 }
 
 
@@ -174,6 +188,7 @@ SOCIALACCOUNT_PROVIDERS = {
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
+    "USER_DETAILS_SERIALIZER": "authentication.serializers.UserDetailsSerializer",
 }
 
 SIMPLE_JWT = {

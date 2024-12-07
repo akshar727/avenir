@@ -37,11 +37,19 @@ class UserManager(BaseUserManager):
         return user
 
 class CapsuleMedia(models.Model):
-    title = models.CharField(max_length=100)
-    media = models.FileField(upload_to='media/')
+    media = models.FileField(upload_to='')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False,verbose_name="UUID")
+
+    
+
+class CapsuleCollection(models.Model):
+    title = models.CharField(max_length=100)
+    capsules = models.ManyToManyField(CapsuleMedia, blank=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False,verbose_name="UUID")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     location = models.CharField(max_length=100)
 
     def __str__(self):
@@ -51,7 +59,7 @@ class User(AbstractUser):
     username = None
     objects = UserManager()
     email = models.EmailField(max_length=100, unique=True)
-    capsule_media = models.ManyToManyField(CapsuleMedia, blank=True)
+    collections = models.ManyToManyField(CapsuleCollection, blank=True)
     # add uuid
     USERNAME_FIELD = 'email'
     uuid = models.UUIDField(default=uuid.uuid4, editable=False,verbose_name="UUID")

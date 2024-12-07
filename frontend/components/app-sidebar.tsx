@@ -15,7 +15,7 @@ import {
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
+import { CollectionSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -26,28 +26,6 @@ import {
 
 // This is sample data.
 const data = {
-  user: {
-    name: "Akshar Desai",
-    email: "akshar727@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  collections: [
-    {
-      name: "Puerto Rico",
-      logo: GalleryVerticalEnd,
-      date: "2024",
-    },
-    {
-      name: "Hawaii",
-      logo: AudioWaveform,
-      date: "July 2023",
-    },
-    {
-      name: "France",
-      logo: Command,
-      date: "April 2022",
-    },
-  ],
   navMain: [
     {
       title: "Playground",
@@ -154,18 +132,21 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar(props: any) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
-        <TeamSwitcher teams={data.collections} />
+        <CollectionSwitcher
+          onSelectCollection={props.onSelectCollection}
+          collections={props.collections}
+        />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={props.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
