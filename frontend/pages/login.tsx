@@ -58,7 +58,7 @@ export default function Page() {
               Continue with Google
             </Button>
           </div>
-          <div className="mb-4 w-full">
+          {/* <div className="mb-4 w-full">
             <Button
               onClick={() => signIn("github")}
               type="button"
@@ -71,7 +71,7 @@ export default function Page() {
               />
               Continue with GitHub
             </Button>
-          </div>
+          </div> */}
           <div className="relative flex py-2 items-center">
             <div className="flex-grow border-t border-gray-400"></div>
             <span className="flex-shrink mx-4 text-gray-400 text-sm font-medium">

@@ -1,6 +1,8 @@
 from django.conf import settings
 from .models import *
 from rest_framework import serializers
+from allauth.account.adapter import get_adapter
+from allauth.account.utils import setup_user_email
 
 
 
@@ -21,6 +23,7 @@ class CollectionSerializerDeep(serializers.ModelSerializer):
     class Meta:
         model = CapsuleCollection
         fields = '__all__'
+
 
 
 class UserDetailsSerializer(serializers.ModelSerializer):

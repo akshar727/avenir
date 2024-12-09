@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # set the user model
 AUTH_USER_MODEL = "authentication.User"
 ACCOUNT_USER_MODEL_USERNAME_FIELD = "email"
+# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 # Application definition
 
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.github",
     "dj_rest_auth",
     "dj_rest_auth.registration",
     # custom
@@ -152,6 +154,11 @@ REST_FRAMEWORK = {
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
+# ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_UNIQUE_EMAIL = True
+# ACCOUNT_USERNAME_REQUIRED = False
+
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
@@ -175,7 +182,9 @@ SOCIALACCOUNT_PROVIDERS = {
             "key": "",
         },
         'SCOPE': [
-            'user'
+            'user',
+            'repo',
+            'read:org',
             ],
     }
 }
@@ -184,6 +193,9 @@ SOCIALACCOUNT_PROVIDERS = {
 # dj-rest-auth & djangorestframework-simplejwt
 # https://dj-rest-auth.readthedocs.io/en/latest/index.html
 # https://django-rest-framework-simplejwt.readthedocs.io/en/latest/index.html
+
+# increase max mb size for file uploads
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800
 
 REST_AUTH = {
     "USE_JWT": True,
@@ -224,3 +236,10 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'testacc2048.a@gmail.com'
+EMAIL_HOST_PASSWORD = 'pwd'
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

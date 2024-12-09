@@ -35,11 +35,12 @@ const SIGN_IN_HANDLERS = {
   },
   "github": async (user, account, profile, email, credentials) => {
     try {
+      console.log("Account: ",account)
       const response = await axios({
         method: "post",
         url: process.env.NEXTAUTH_BACKEND_URL + "auth/github/",
         data: {
-          access_token: account["id_token"]
+          access_token: account["access_token"]
         },
       });
       account["meta"] = response.data;

@@ -4,9 +4,12 @@ import { useSession, signIn } from "next-auth/react";
 import * as React from "react";
 import { LoadingCircle } from "@/components/LoadingCircle";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { set } from "date-fns";
 
 export default function Page() {
   const { status } = useSession({ required: false });
+  const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [firstName, setFirstName] = React.useState("");
@@ -34,14 +37,14 @@ export default function Page() {
               </Button>
             </div>
             <div className="mb-4 w-full">
-              <Button className="flex gh-btn items-center justify-center w-full text-slate-900 hover:bg-slate-900 hover:text-white border border-slate-900 rounded-[6px] h-[40px] bg-transparent">
+              {/* <Button className="flex gh-btn items-center justify-center w-full text-slate-900 hover:bg-slate-900 hover:text-white border border-slate-900 rounded-[6px] h-[40px] bg-transparent">
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1200px-Octicons-mark-github.svg.png"
                   className="w-6 h-6 transition-colors duration-200"
                   type="button"
                 />
                 Sign up with GitHub
-              </Button>
+              </Button> */}
             </div>
             <div className="relative flex py-2 items-center">
               <div className="flex-grow border-t border-gray-400"></div>
@@ -117,12 +120,50 @@ export default function Page() {
               <Button
                 className="flex items-center justify-center w-full border-[6px] text-white border-slate-900 hover:border-slate-800 hover:bg-slate-800 rounded-md bg-slate-900"
                 type="button"
-                onClick={() => {
+                onClick={async (e) => {
+                  e.preventDefault();
                   setProcessing(true);
+                  try {
+                  const request = await axios({
+                    method: "post",
+                    url:
+                      process.env.NEXT_PUBLIC_BACKEND_URL +
+                      "auth/register/",
+                    data: {
+                      email: email,
+                      password: password,
+                      first_name: firstName,
+                      last_name: lastName,
+                    },
+                  });
+                  console.log(request.data)
+                  // check if the status is 200
+                  if (request.status === 200) {
+                    // redirect to the login page
+                    router.push("/login");
+                  }
+                  else if (request.status === 400) {
+                    // check if request.data.email exists, if so, alert that the email is already in use
+                    if (request.data.error) {
+                      alert(request.data.error);
+                    }
+                    setProcessing(false);
+                  }
+                  else {
+                    setProcessing(false);
+                    alert(request.data.error);
+                  }
+                  
+                } catch (error) {
+                  console.error(error);
+                  setProcessing(false);
+                  alert("An error occurred. Please try again.");
+                }
                   // Handle sign up logic here
                 }}
               >
-                {processing ? <LoadingCircle /> : "Create Account"}
+                Create Account
+                <LoadingCircle p={processing}/>
               </Button>
             </div>
             <div className="mt-4 text-center font-inter text-[14px] font-medium">

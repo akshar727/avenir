@@ -115,17 +115,22 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "Collection 1",
       url: "#",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
+      name: "Collection 2",
       url: "#",
       icon: PieChart,
     },
     {
-      name: "Travel",
+      name: "Settings",
+      url: "#",
+      icon: Map,
+    },
+    {
+      name: "Get Sharable Link",
       url: "#",
       icon: Map,
     },
@@ -139,14 +144,16 @@ export function AppSidebar(props: any) {
         <CollectionSwitcher
           onSelectCollection={props.onSelectCollection}
           collections={props.collections}
+          session={props.session}
+          currentCollection={props.currentCollection}
         />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        {/* <NavMain items={data.navMain} /> */}
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={props.user} />
+        <NavUser user={props.user} session={props.session} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

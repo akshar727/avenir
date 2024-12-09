@@ -31,8 +31,24 @@ import { LoadingCircle } from "@/components/LoadingCircle";
 
 export default function Page() {
   const { data: session, status } = useSession({ required: true });
-  const [formatted, setFormatted] = useState("unset");
+  interface User {
+    name: string;
+    email: string;
+  }
+
+  interface Collection {
+    uuid: string;
+    title: string;
+  }
+
+  interface Formatted {
+    user: User;
+    collections: Collection[];
+  }
+
+  const [formatted, setFormatted] = useState<Formatted | "unset">("unset");
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
   interface Capsule {
     media: string;
   }
@@ -40,7 +56,7 @@ export default function Page() {
     capsules: [],
   });
   const getUserDetails = async () => {
-    try {
+    // try {
       const response = await axios({
         method: "get",
         url: process.env.NEXT_PUBLIC_BACKEND_URL + "auth/user/",
@@ -57,137 +73,28 @@ export default function Page() {
         collections: collections,
       };
       setFormatted(formatted);
-      getCollectionData(formatted.collections[0].uuid);
-    } catch (error) {
-      // signOut({ callbackUrl: "/login" });
-    }
+      if (collections.length > 0) {
+        getCollectionData(collections[0].uuid);
+      }
+    // } catch (error) {
+    //   alert(error.message);
+    //   // signOut({ callbackUrl: "/login" });
+    // }
     return Promise.resolve();
   };
   const getCollectionData = async (uuid: string) => {
-    console.log(uuid);
-    try {
+    // try {
       const response = await axios({
         method: "get",
         url: process.env.NEXT_PUBLIC_BACKEND_URL + "auth/capsules/" + uuid,
         headers: { Authorization: "Bearer " + session?.access_token },
       });
       setCurrentCollectionData(response.data);
-    } catch (error) {
-      // setCurrentCollectionData(error.message);
-      // signOut({ callbackUrl: "/login" });
-    }
+    // } catch (error) {
+    //   alert(error.message);
+    //   // signOut({ callbackUrl: "/login" });
+    // }
   };
-  // const data = {
-  //   user: {
-  //     name: "Akshar Desai",
-  //     email: "akshar727@gmail.com",
-  //     avatar: "/avatars/shadcn.jpg",
-  //   },
-  //   collections: [
-  //     {
-  //       name: "Puerto Rico",
-  //       logo: GalleryVerticalEnd,
-  //       date: "2024",
-  //     },
-  //     {
-  //       name: "Hawaii",
-  //       logo: AudioWaveform,
-  //       date: "July 2023",
-  //     },
-  //     {
-  //       name: "France",
-  //       logo: Command,
-  //       date: "April 2022",
-  //     },
-  //   ],
-  //   navMain: [
-  //     {
-  //       title: "Playground",
-  //       url: "#",
-  //       icon: SquareTerminal,
-  //       isActive: true,
-  //       items: [
-  //         {
-  //           title: "History",
-  //           url: "#",
-  //         },
-  //         {
-  //           title: "Starred",
-  //           url: "#",
-  //         },
-  //         {
-  //           title: "Settings",
-  //           url: "#",
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       title: "Models",
-  //       url: "#",
-  //       icon: Bot,
-  //       items: [
-  //         {
-  //           title: "Genesis",
-  //           url: "#",
-  //         },
-  //         {
-  //           title: "Explorer",
-  //           url: "#",
-  //         },
-  //         {
-  //           title: "Quantum",
-  //           url: "#",
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       title: "Documentation",
-  //       url: "#",
-  //       icon: BookOpen,
-  //       items: [
-  //         {
-  //           title: "Introduction",
-  //           url: "#",
-  //         },
-  //         {
-  //           title: "Get Started",
-  //           url: "#",
-  //         },
-  //         {
-  //           title: "Tutorials",
-  //           url: "#",
-  //         },
-  //         {
-  //           title: "Changelog",
-  //           url: "#",
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       title: "Settings",
-  //       url: "#",
-  //       icon: Settings2,
-  //       items: [
-  //         {
-  //           title: "General",
-  //           url: "#",
-  //         },
-  //         {
-  //           title: "Team",
-  //           url: "#",
-  //         },
-  //         {
-  //           title: "Billing",
-  //           url: "#",
-  //         },
-  //         {
-  //           title: "Limits",
-  //           url: "#",
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // };
 
   useEffect(() => {
     if (session?.access_token !== undefined) {
@@ -216,11 +123,18 @@ export default function Page() {
           "Content-Type": "multipart/form-data",
         },
         data: formData,
+        onUploadProgress: (data) => {
+          console.log(data.loaded);
+          console.log(data.total);
+          //Set the progress value to show the progress bar
+          setProgress(Math.round((100 * data.loaded) / data.total));
+        },
       });
       console.log(response.data);
       getCollectionData(currentCollectionData.uuid);
       setUploadDialogOpen(false);
       setUploading(false);
+      setProgress(0);
     } catch (error) {
       console.log(error);
       setUploading(false);
@@ -233,6 +147,7 @@ export default function Page() {
     console.log("collection changed");
     getCollectionData(uuid);
   };
+  const [filesSelected, setFilesSelected] = useState<number>(0);
 
   return (
     <SidebarProvider>
@@ -241,6 +156,8 @@ export default function Page() {
           onSelectCollection={setCollection}
           user={formatted.user}
           collections={formatted.collections}
+          currentCollection={currentCollectionData}
+          session={session}
         />
       )}
       <SidebarInset>
@@ -248,11 +165,21 @@ export default function Page() {
           <div className="flex justify-between flex-1 px-4">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1" />
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              <Breadcrumb>
+              <Separator
+                orientation="vertical"
+                className={
+                  "mr-2 h-4 " +
+                  (formatted.collections?.length === 0 ? "hidden" : "")
+                }
+              />
+              <Breadcrumb
+                className={formatted.collections?.length === 0 ? "hidden" : ""}
+              >
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbPage>{currentCollectionData.title}</BreadcrumbPage>
+                    <BreadcrumbPage>
+                      {currentCollectionData.title}
+                    </BreadcrumbPage>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
@@ -263,7 +190,9 @@ export default function Page() {
             </div>
             <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
               <DialogTrigger asChild>
-                <Button>Add more photos</Button>
+                <Button disabled={formatted.collections?.length === 0}>
+                  Add more photos
+                </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -274,15 +203,17 @@ export default function Page() {
                   </DialogDescription>
                 </DialogHeader>
                 <div>
-                  <Input multiple={true} id="picture" type="file" />
+                  <Input multiple={true} id="picture" type="file" onChange={(e) => setFilesSelected(e.target.files.length)} />
                 </div>
                 <DialogFooter>
                   <Button
                     className="relative transition-all"
                     onClick={() => uploadFiles()}
                     type="submit"
+                    disabled={uploading || filesSelected === 0}
                   >
                     Upload files
+                    {uploading && " " + progress+ "%"}
                     <LoadingCircle p={uploading} />
                   </Button>
                 </DialogFooter>
@@ -292,6 +223,12 @@ export default function Page() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+            {formatted.collections?.length === 0 && (
+              <p>
+                You don't have any collections.. yet! Go to the top left to
+                create one!
+              </p>
+            )}
             {currentCollectionData.capsules.map((capsule) => (
               <div
                 key={capsule.media}

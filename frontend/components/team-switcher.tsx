@@ -11,6 +11,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import {
   Dialog,
   DialogContent,
@@ -23,7 +32,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoadingCircle } from "@/components/LoadingCircle";
-import { Label } from "@/components/ui/label";
 
 import {
   SidebarMenu,
@@ -31,55 +39,83 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
+import axios from "axios";
 
 export function CollectionSwitcher({
   collections,
   onSelectCollection,
+  session,
+  currentCollection,
 }: {
   collections: {
-    name: string;
-    date: string;
+    title: string;
+    location: string;
+    uuid: string;
   }[];
+  onSelectCollection: (uuid: string) => void;
+  session: any;
+  currentCollection: any;
 }) {
   const { isMobile } = useSidebar();
-  const [activeCollection, setActiveCollection] = React.useState(
-    collections[0]
-  );
+  const [activeCollection, setActiveCollection] =
+    React.useState(currentCollection);
+  const [name, setName] = React.useState("");
+  const [location, setLocation] = React.useState("");
+  const [open, setOpen] = React.useState(false);
+  const [creating, setCreating] = React.useState(false);
 
   const changeCollection = (collection: any) => {
     setActiveCollection(collection);
     onSelectCollection(collection.uuid);
   };
 
-  const createCollection = () => {
-    // TODO
-
-    const name = document.getElementById("name").value;
-    const location = document.getElementById("location").value;
-
+  const createCollection = async () => {
+    setCreating(true);
+    console.log(name, location);
+    const data = {
+      title: name,
+      location: location,
+    };
+    // send the data as a post to /api/auth/collections/
+    // then get the new collection data and set it as the active
+    // collection
+    const response = await axios({
+      method: "post",
+      url: process.env.NEXT_PUBLIC_BACKEND_URL + "auth/collections/",
+      headers: {
+        Authorization: "Bearer " + session?.access_token,
+      },
+      data: data,
+    });
+    console.log(response.data);
+    changeCollection(response.data);
+    collections.push(response.data);
+    setCreating(false);
+    setOpen(false);
   };
+
+  React.useEffect(() => {
+    setActiveCollection(currentCollection);
+  }, [currentCollection]);
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <Dialog>
-          {/* // open={uploadDialogOpen}
-              // onOpenChange={setUploadDialogOpen} */}
+        <Dialog open={open} onOpenChange={setOpen}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  {/* <activeTeam.logo className="size-4" /> */}
-                </div>
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"></div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    {activeCollection.title}
+                    {activeCollection.title ?? "No collection"}
                   </span>
                   <span className="truncate text-xs">
-                    {activeCollection.location}
+                    {activeCollection.location ?? "No location"}
                   </span>
                 </div>
                 <ChevronsUpDown className="ml-auto" />
@@ -104,16 +140,18 @@ export function CollectionSwitcher({
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2 p-2">
-                <DialogTrigger asChild>
+              <DialogTrigger asChild>
+                <DropdownMenuItem className="gap-2 p-2">
+                  {/* <DialogTrigger asChild> */}
                   <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                     <Plus className="size-4" />
                   </div>
-                </DialogTrigger>
-                <DialogTrigger asChild>
+                  {/* </DialogTrigger>
+                <DialogTrigger asChild> */}
                   <p className="font-inter">Add a collection</p>
-                </DialogTrigger>
-              </DropdownMenuItem>
+                  {/* </DialogTrigger> */}
+                </DropdownMenuItem>
+              </DialogTrigger>
             </DropdownMenuContent>
           </DropdownMenu>
           <DialogContent className="sm:max-w-[425px]">
@@ -123,21 +161,33 @@ export function CollectionSwitcher({
                 Create a new collection to organize photos from a new journey!
               </DialogDescription>
             </DialogHeader>
-            <div>
-              <label htmlFor="name" className="font-inter">Trip Title</label>
-              <Input id="name" />
+            <div className="flex flex-wrap gap-y-2">
+              <label htmlFor="name" className="font-inter">
+                Trip Title
+              </label>
+              <Input id="name" onChange={(e) => setName(e.target.value)} />
               <br />
-              <label htmlFor="location" className="font-inter">Trip Location</label>
-              <Input id="location" />
+              <label htmlFor="location" className="font-inter">
+                Trip Location
+              </label>
+              <Input
+                id="location"
+                onChange={(e) => setLocation(e.target.value)}
+              />
             </div>
             <DialogFooter>
               <Button
                 className="relative transition-all"
                 onClick={() => createCollection()}
-                type="submit"
+                type="button"
+                disabled={
+                  creating ||
+                  !name.replace(/\s+/, "") ||
+                  !location.replace(/\s+/, "")
+                }
               >
                 Create collection
-                {/* <LoadingCircle p={uploading} /> */}
+                <LoadingCircle p={creating} />
               </Button>
             </DialogFooter>
           </DialogContent>
