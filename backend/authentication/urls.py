@@ -4,11 +4,13 @@ from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
 from django.urls import path
 from rest_framework_simplejwt.views import TokenVerifyView
 
-from authentication.views import GoogleLogin, CapsuleView, GithubLogin, CreateCollection, register
+from authentication.views import *
 
 urlpatterns = [
     path("register/",register, name="rest_register"),
     path("login/", LoginView.as_view(), name="rest_login"),
+    path("shared/view/<uuid:uuid>", AccessSharedCollection.as_view(), name="shared_collection"),
+    path("shared/generate/<uuid:uuid>", GenerateShareableLink.as_view(), name="generate"),
     path("capsules/<uuid:id>", CapsuleView.as_view(), name="capsule"),
     path("collections/", CreateCollection.as_view(), name="collection"),
     path("logout/", LogoutView.as_view(), name="rest_logout"),

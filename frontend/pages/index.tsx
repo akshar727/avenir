@@ -3,17 +3,165 @@ import { signIn, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import * as React from "react";
 import HomeMenu from "@/components/homepage-nav";
-import { Router } from "lucide-react";
+import { ArrowRight, CircleCheck, Router } from "lucide-react";
+
+
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+
+const Pricing18 = () => {
+  return (
+    <section id="pricing" className="py-32">
+      <div className="container">
+        <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
+          <h2 className="text-pretty mb-8 text-4xl font-light lg:text-6xl">
+            Pricing
+          </h2>
+          <div className="flex flex-col items-stretch gap-6 md:flex-row">
+            <Card className="flex w-80 flex-col justify-between text-left">
+              <CardHeader className="gap-y-2">
+                <CardTitle>
+                  <p>Basic</p>
+                </CardTitle>
+                <span className="text-4xl font-bold">FREE</span>
+              </CardHeader>
+              <CardContent>
+                <Separator className="mb-6" />
+                <ul className="space-y-4">
+                  <li className="flex items-center gap-2">
+                    <CircleCheck className="size-4" />
+                    <span>Up to 5 collections.</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CircleCheck className="size-4" />
+                    <span>20 GB Storage.</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CircleCheck className="size-4" />
+                    <span>Automatic Upload Sync.</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CircleCheck className="size-4" />
+                    <span>Regular emails including memories.</span>
+                  </li>
+                </ul>
+              </CardContent>
+              <CardFooter className="mt-auto">
+                <Button className="w-full">
+                  Get Started
+                  <ArrowRight className="ml-2 size-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card className="flex w-80 flex-col justify-between text-left">
+              <CardHeader>
+                <CardTitle className="gap-y-2">
+                  <p>Standard</p>
+                </CardTitle>
+                <span className="text-4xl font-bold">$8.99<span className="font-light">/month</span></span>
+              </CardHeader>
+              <CardContent>
+                <Separator className="mb-6" />
+                <p className="mb-3 text-lg font-semibold">
+                  Everything in Basic
+                </p>
+                <ul className="space-y-4">
+                  <li className="flex items-center gap-2">
+                    <CircleCheck className="size-4" />
+                    <span>Up to 60 collections.</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CircleCheck className="size-4" />
+                    <span>1 TB storage.</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CircleCheck className="size-4" />
+                    <span>AI assistant for organization.</span>
+                  </li>
+                </ul>
+              </CardContent>
+              <CardFooter className="mt-auto">
+                <Button className="w-full">
+                  Get Started
+                  <ArrowRight className="ml-2 size-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card className="flex w-80 flex-col justify-between text-left">
+              <CardHeader>
+                <CardTitle>
+                  <p>Premium</p>
+                </CardTitle>
+                <span className="text-4xl font-bold">$14.99<span className="font-light">/month</span></span>
+              </CardHeader>
+              <CardContent>
+                <Separator className="mb-6" />
+                <p className="mb-3 text-lg font-semibold">Everything in Standard</p>
+                <ul className="space-y-4">
+                  <li className="flex items-center gap-2">
+                    <CircleCheck className="size-4" />
+                    <span>Unlimited Collections.</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CircleCheck className="size-4" />
+                    <span>AI Montage Maker.</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CircleCheck className="size-4" />
+                    <span>2 TB storage.</span>
+                  </li>
+                </ul>
+              </CardContent>
+              <CardFooter className="mt-auto">
+                <Button className="w-full">
+                  Get Started
+                  <ArrowRight className="ml-2 size-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+
+const faqItems = [
+  {
+    question: "How can I get started?",
+    answer:
+      "You can get started by signing up for a free account or choosing a plan that suits your needs.",
+  },
+  {
+    question: "How can I access my photos?",
+    answer:
+      "You can access your photos from anywhere using our website and mobile app.",
+  },
+  {
+    question: "What is the AI Montage Maker?",
+    answer:
+      "The AI Montage Maker is a feature available in the Premium plan that allows you to create montages of your trips easily.",
+  },
+  {
+    question: "What is the Automatic Upload Sync?",
+    answer: "If you download our mobile app, you can ask the app to automatially copy all your photos and move them onto the platform.",
+  }
+];
 
 export default function Home() {
   const { data: session, status } = useSession({ required: false });
   const router = useRouter();
+
   return (
     <React.Fragment>
       <div className="mx-5 mt-5 flex items-center justify-between">
         <div className="flex items-center text-center justify-center">
-        <img src="/favicon.svg" alt="Logo" className="w-12 h-12" />
-        <h1 className="text-lg font-inter">Avenir</h1>
+          <img src="/favicon.svg" alt="Logo" className="w-12 h-12" />
+          <h1 className="text-lg font-inter font-medium">Avenir</h1>
         </div>
         <div className="text-lg flex justify-between gap-x-4">
           <HomeMenu />
@@ -29,7 +177,12 @@ export default function Home() {
             A centralized, cloud media storage base to keep all your journeys in
             one place
           </p>
-          <Button className="self-start px-4 py-6 text-xl" onClick={() => router.push("/signup")}>Get Started</Button>
+          <Button
+            className="self-start px-4 py-6 text-xl"
+            onClick={() => router.push("/signup")}
+          >
+            Get Started
+          </Button>
         </div>
         <div className="flex-1 flex justify-center items-center min-h-full">
           <div className="grid grid-cols-2 gap-4 max-w-md">
@@ -149,7 +302,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div
+      {/* <div
         id="pricing"
         className="flex flex-col items-center font-inter justify-center py-16 bg-white"
       >
@@ -159,8 +312,9 @@ export default function Home() {
             <h3 className="text-4xl font-semibold mb-6">Basic</h3>
             <p className="text-3xl mb-6">FREE</p>
             <ul className="text-left mb-4">
-              <li className="text-2xl">5 Collections</li>
+              <li className="text-2xl">Up to 5 Collections</li>
               <li className="text-2xl">20GB Storage</li>
+              <li className="text-2xl">Automatic Upload Sync</li>
               <li className="text-2xl">Regular emails including memories</li>
             </ul>
             <Button className="px-8 py-4 text-xl w-full">Choose Plan</Button>
@@ -169,8 +323,7 @@ export default function Home() {
             <h3 className="text-4xl font-semibold mb-6">Standard</h3>
             <p className="text-3xl mb-6">$8.99/month</p>
             <ul className="text-left mb-4">
-              <li className="text-2xl">AI Montage Maker</li>
-              <li className="text-2xl">50 Collections</li>
+              <li className="text-2xl">Up to 60 Collections</li>
               <li className="text-2xl">1TB Storage</li>
               <li className="text-2xl">All features from Basic included</li>
             </ul>
@@ -181,13 +334,62 @@ export default function Home() {
             <p className="text-3xl mb-6">$14.99/month</p>
             <ul className="text-left mb-4">
               <li className="text-2xl">Unlimited Collections</li>
+              <li className="text-2xl">AI Montage Maker</li>
               <li className="text-2xl">2TB Storage</li>
               <li className="text-2xl">All features from Standard included</li>
             </ul>
             <Button className="px-8 py-4 text-xl w-full">Choose Plan</Button>
           </div>
         </div>
+      </div> */}
+      <div className="flex items-center justify-center font-inter">
+      <Pricing18/>
       </div>
+
+      <div
+        id="faq"
+        className="flex flex-col items-center font-inter justify-center py-16 bg-gray-100"
+      >
+        <h2 className="text-[60px] mb-[4rem]">Frequently Asked Questions</h2>
+        <div className="w-full max-w-4xl">
+          <Accordion type="single" collapsible>
+            {faqItems.map((item, index) => (
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger>{item.question}</AccordionTrigger>
+                <AccordionContent>{item.answer}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </div>
+      <footer className="bg-black text-white py-8">
+        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+          <div className="mb-4 md:mb-0">
+        <h3 className="text-lg font-semibold">Avenir</h3>
+        <p className="text-sm italic">"Treasure your journeys, relive the moments"</p>
+        <p className="text-sm">© 2024 Avenir. All rights reserved.</p>
+          </div>
+          <div className="flex flex-col md:flex-row gap-4">
+        <a href="/about" className="text-sm hover:underline">
+          About Us
+        </a>
+        <a href="/contact" className="text-sm hover:underline">
+          Contact
+        </a>
+        <a href="/privacy" className="text-sm hover:underline">
+          Privacy Policy
+        </a>
+        <a href="/terms" className="text-sm hover:underline">
+          Terms of Service
+        </a>
+          </div>
+        </div>
+        <div className="text-center">
+            <a href="#" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="text-sm hover:underline">
+            Back to Top
+            </a>
+        </div>
+      </footer>
     </React.Fragment>
   );
 }

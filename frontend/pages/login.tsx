@@ -27,7 +27,12 @@ export default function Page() {
   }
   if (session && !processing) {
     console.log("session");
+    if (router.query.callbackUrl) {
+      router.push(router.query.callbackUrl as string);
+    }
+    else {
     router.push("/dashboard");
+    }
   }
 
   return (

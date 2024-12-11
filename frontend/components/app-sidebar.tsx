@@ -5,8 +5,8 @@ import {
   Bot,
   Command,
   Frame,
-  GalleryVerticalEnd,
-  Map,
+  Cog,
+  Share,
   PieChart,
   Settings2,
   SquareTerminal,
@@ -23,121 +23,47 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { on } from "events";
+import axios from "axios";
 
 // This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Collection 1",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Collection 2",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Settings",
-      url: "#",
-      icon: Map,
-    },
-    {
-      name: "Get Sharable Link",
-      url: "#",
-      icon: Map,
-    },
-  ],
-};
 
 export function AppSidebar(props: any) {
+  const data = {
+    projects: [
+      {
+        name: "Collection Settings",
+        url: "#",
+        icon: Cog,
+      },
+      {
+        name: "Get Sharable Link",
+        url: "#",
+        icon: Share,
+        clickCallback: async (e: any) => {
+          e.preventDefault();
+          const response = await axios({
+            method: "POST",
+            url:
+              process.env.NEXT_PUBLIC_BACKEND_URL +
+              "auth/shared/generate/" +
+              props.currentCollection.uuid,
+            headers: { Authorization: "Bearer " + props.session?.access_token },
+          });
+          const data = response.data;
+          console.log(process.env.AVENIR_FRONTEND_URL);
+          props.shareUrl(
+            "https://super-funicular-677w567j5vpcrgr6-3000.app.github.dev" +
+              "/shared/" +
+              data.uuid +
+              "?access_token=" +
+              data.token
+          );
+          props.copyOpenChange(true);
+        },
+      },
+    ],
+  };
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>

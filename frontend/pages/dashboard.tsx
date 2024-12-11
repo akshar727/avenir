@@ -7,6 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Copy } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,
@@ -16,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -49,6 +51,7 @@ export default function Page() {
   const [formatted, setFormatted] = useState<Formatted | "unset">("unset");
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [copyOpen, setCopyOpen] = useState(false);
   interface Capsule {
     media: string;
   }
@@ -57,25 +60,25 @@ export default function Page() {
   });
   const getUserDetails = async () => {
     // try {
-      const response = await axios({
-        method: "get",
-        url: process.env.NEXT_PUBLIC_BACKEND_URL + "auth/user/",
-        headers: { Authorization: "Bearer " + session?.access_token },
-      });
-      var raw_data = JSON.parse(JSON.stringify(response.data));
-      var user = {
-        name: raw_data.first_name + " " + raw_data.last_name,
-        email: raw_data.email,
-      };
-      var collections = raw_data.collections;
-      let formatted = {
-        user: user,
-        collections: collections,
-      };
-      setFormatted(formatted);
-      if (collections.length > 0) {
-        getCollectionData(collections[0].uuid);
-      }
+    const response = await axios({
+      method: "get",
+      url: process.env.NEXT_PUBLIC_BACKEND_URL + "auth/user/",
+      headers: { Authorization: "Bearer " + session?.access_token },
+    });
+    var raw_data = JSON.parse(JSON.stringify(response.data));
+    var user = {
+      name: raw_data.first_name + " " + raw_data.last_name,
+      email: raw_data.email,
+    };
+    var collections = raw_data.collections;
+    let formatted = {
+      user: user,
+      collections: collections,
+    };
+    setFormatted(formatted);
+    if (collections.length > 0) {
+      getCollectionData(collections[0].uuid);
+    }
     // } catch (error) {
     //   alert(error.message);
     //   // signOut({ callbackUrl: "/login" });
@@ -84,12 +87,12 @@ export default function Page() {
   };
   const getCollectionData = async (uuid: string) => {
     // try {
-      const response = await axios({
-        method: "get",
-        url: process.env.NEXT_PUBLIC_BACKEND_URL + "auth/capsules/" + uuid,
-        headers: { Authorization: "Bearer " + session?.access_token },
-      });
-      setCurrentCollectionData(response.data);
+    const response = await axios({
+      method: "get",
+      url: process.env.NEXT_PUBLIC_BACKEND_URL + "auth/capsules/" + uuid,
+      headers: { Authorization: "Bearer " + session?.access_token },
+    });
+    setCurrentCollectionData(response.data);
     // } catch (error) {
     //   alert(error.message);
     //   // signOut({ callbackUrl: "/login" });
@@ -148,6 +151,7 @@ export default function Page() {
     getCollectionData(uuid);
   };
   const [filesSelected, setFilesSelected] = useState<number>(0);
+  const [shareUrl, setShareUrl] = useState<string>("");
 
   return (
     <SidebarProvider>
@@ -158,6 +162,9 @@ export default function Page() {
           collections={formatted.collections}
           currentCollection={currentCollectionData}
           session={session}
+          copyOpen={copyOpen}
+          copyOpenChange={setCopyOpen}
+          shareUrl={setShareUrl}
         />
       )}
       <SidebarInset>
@@ -203,7 +210,12 @@ export default function Page() {
                   </DialogDescription>
                 </DialogHeader>
                 <div>
-                  <Input multiple={true} id="picture" type="file" onChange={(e) => setFilesSelected(e.target.files.length)} />
+                  <Input
+                    multiple={true}
+                    id="picture"
+                    type="file"
+                    onChange={(e) => setFilesSelected(e.target.files.length)}
+                  />
                 </div>
                 <DialogFooter>
                   <Button
@@ -213,7 +225,7 @@ export default function Page() {
                     disabled={uploading || filesSelected === 0}
                   >
                     Upload files
-                    {uploading && " " + progress+ "%"}
+                    {uploading && " " + progress + "%"}
                     <LoadingCircle p={uploading} />
                   </Button>
                 </DialogFooter>
@@ -225,8 +237,8 @@ export default function Page() {
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             {formatted.collections?.length === 0 && (
               <p>
-                You don't have any collections.. yet! Go to the top left to
-                create one!
+                You don't have any collections.. yet! Use the dropdown in the
+                top left create one!
               </p>
             )}
             {currentCollectionData.capsules.map((capsule) => (
@@ -246,6 +258,42 @@ export default function Page() {
             ))}
           </div>
         </div>
+        <Dialog open={copyOpen} onOpenChange={setCopyOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Share link</DialogTitle>
+              <DialogDescription>
+                Anyone who has this link will be able to view this.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex items-center space-x-2">
+              <div className="grid flex-1 gap-2">
+                <label htmlFor="link" className="sr-only">
+                  Link
+                </label>
+                <Input id="link" value={shareUrl} readOnly />
+              </div>
+              <Button
+                onClick={async () => {
+                  await navigator.clipboard.writeText(shareUrl);
+                }}
+                type="button"
+                size="sm"
+                className="px-3"
+              >
+                <span className="sr-only">Copy</span>
+                <Copy />
+              </Button>
+            </div>
+            <DialogFooter className="sm:justify-start">
+              <DialogClose asChild>
+                <Button type="button" variant="secondary">
+                  Close
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -8,13 +8,17 @@ import axios from "axios";
 import { set } from "date-fns";
 
 export default function Page() {
-  const { status } = useSession({ required: false });
+  const { data: session, status } = useSession({ required: false });
   const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [processing, setProcessing] = React.useState(false);
+  if (session && !processing) {
+    console.log("session");
+    router.push("/dashboard");
+  }
   return (
     <div>
       <div className="flex h-screen">
