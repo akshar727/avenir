@@ -37,7 +37,7 @@ export function AppSidebar(props: any) {
         icon: Cog,
       },
       {
-        name: "Get Sharable Link",
+        name: "Get Shareable Link",
         url: "#",
         icon: Share,
         clickCallback: async (e: any) => {

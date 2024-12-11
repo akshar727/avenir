@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Copy } from "lucide-react";
+import { Copy, Heart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,
@@ -20,16 +20,20 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { CalendarIcon } from "lucide-react";
+import { DateRange } from "react-day-picker";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { addDays, format } from "date-fns";
 import { useSession, signOut } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { HTMLAttributes, useEffect, useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { LoadingCircle } from "@/components/LoadingCircle";
+
 
 export default function Page() {
   const { data: session, status } = useSession({ required: true });
@@ -238,22 +242,27 @@ export default function Page() {
             {formatted.collections?.length === 0 && (
               <p>
                 You don't have any collections.. yet! Use the dropdown in the
-                top left create one!
+                top left (the black box) to create one!
               </p>
             )}
             {currentCollectionData.capsules.map((capsule) => (
               <div
-                key={capsule.media}
-                className="aspect-video rounded-xl bg-muted/50 overflow-hidden"
+              key={capsule.media}
+              className="relative aspect-video group rounded-xl bg-muted/50 overflow-hidden"
               >
-                <img
-                  src={
-                    "https://super-funicular-677w567j5vpcrgr6-8000.app.github.dev" +
-                    capsule.media
-                  }
-                  loading="lazy"
-                  className="w-full h-full object-cover rounded-xl"
-                />
+              <img
+                src={
+                "https://super-funicular-677w567j5vpcrgr6-8000.app.github.dev" +
+                capsule.media
+                }
+                loading="lazy"
+                className="w-full h-full object-cover rounded-xl"
+              />
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button className="p-1 bg-white rounded-full shadow">
+                <Heart className="w-6 h-6 text-red-500" />
+                </button>
+              </div>
               </div>
             ))}
           </div>
@@ -263,7 +272,7 @@ export default function Page() {
             <DialogHeader>
               <DialogTitle>Share link</DialogTitle>
               <DialogDescription>
-                Anyone who has this link will be able to view this.
+                Anyone who has this link will be able to view this. This link expires in one week.
               </DialogDescription>
             </DialogHeader>
             <div className="flex items-center space-x-2">
