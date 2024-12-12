@@ -26,11 +26,10 @@ export default function Page() {
   const onApprove = (data) => {
     alert(`You have successfully subscribed to ${data.subscriptionID}`); // Optional message given to subscriber
   };
-  // alert(plan)
 
   return (
     <div className="checkout-page flex justify-center items-center h-screen">
-      <Card className="w-96 p-5">
+      <Card className="w-96 p-5 shadow-md">
         <h1 className="text-3xl text-center mb-4">Checkout</h1>
         <div className="plan-details flex justify-between mb-2">
           <span>{capitalizedPlan} Plan</span>

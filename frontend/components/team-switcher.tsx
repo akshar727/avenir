@@ -44,7 +44,7 @@ import axios from "axios";
 import { addDays, format } from "date-fns";
 import { DateRange } from "react-day-picker";
 
-function DatePickerWithRange({
+export function DatePickerWithRange({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
   const [date, setDate] = React.useState<DateRange | undefined>({

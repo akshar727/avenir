@@ -2,7 +2,14 @@ import * as React from "react";
 
 import { useRouter } from "next/router";
 import axios from "axios";
-import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -63,7 +70,6 @@ export default function Page() {
   }, [uuid, token]);
   return (
     <>
-
       <div className="ml-8 mt-2">
         <h1 className="text-3xl">{sharedData.title}</h1>
         <h2 className="text-xl">{sharedData.location}</h2>
@@ -81,14 +87,30 @@ export default function Page() {
               key={capsule.media}
               className="aspect-video rounded-xl bg-muted/50 overflow-hidden"
             >
-              <img
-                src={
-                  "https://super-funicular-677w567j5vpcrgr6-8000.app.github.dev" +
-                  capsule.media
-                }
-                loading="lazy"
-                className="w-full h-full object-cover rounded-xl"
-              />
+              {!capsule.media.includes(".mp4") && (
+                <img
+                  src={
+                    "https://super-funicular-677w567j5vpcrgr6-8000.app.github.dev" +
+                    capsule.media
+                  }
+                  loading="lazy"
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              )}
+              {capsule.media.includes(".mp4") && (
+                <video
+                  src={
+                    "https://super-funicular-677w567j5vpcrgr6-8000.app.github.dev" +
+                    capsule.media
+                  }
+                  className="w-full h-full object-cover rounded-xl"
+                  onMouseEnter={(e) => e.currentTarget.play()}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.pause();
+                    e.currentTarget.currentTime = 0;
+                  }}
+                />
+              )}
             </div>
           ))}
         </div>

@@ -8,6 +8,16 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Copy, Heart } from "lucide-react";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,
@@ -33,7 +43,7 @@ import { HTMLAttributes, useEffect, useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { LoadingCircle } from "@/components/LoadingCircle";
-
+import { DatePickerWithRange } from "@/components/team-switcher";
 
 export default function Page() {
   const { data: session, status } = useSession({ required: true });
@@ -56,6 +66,8 @@ export default function Page() {
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [progress, setProgress] = useState(0);
   const [copyOpen, setCopyOpen] = useState(false);
+  const [changedName, setChangedName] = useState("");
+  const [changedLocation, setChangedLocation] = useState("");
   interface Capsule {
     media: string;
   }
@@ -97,10 +109,8 @@ export default function Page() {
       headers: { Authorization: "Bearer " + session?.access_token },
     });
     setCurrentCollectionData(response.data);
-    // } catch (error) {
-    //   alert(error.message);
-    //   // signOut({ callbackUrl: "/login" });
-    // }
+    setChangedName(response.data.title);
+    setChangedLocation(response.data.location);
   };
 
   useEffect(() => {
@@ -156,6 +166,7 @@ export default function Page() {
   };
   const [filesSelected, setFilesSelected] = useState<number>(0);
   const [shareUrl, setShareUrl] = useState<string>("");
+  const [changeOpen, setChangeOpen] = useState(false);
 
   return (
     <SidebarProvider>
@@ -168,6 +179,8 @@ export default function Page() {
           session={session}
           copyOpen={copyOpen}
           copyOpenChange={setCopyOpen}
+          changeOpen={changeOpen}
+          changeOpenChange={setChangeOpen}
           shareUrl={setShareUrl}
         />
       )}
@@ -210,12 +223,13 @@ export default function Page() {
                   <DialogTitle>Add photos</DialogTitle>
                   <DialogDescription>
                     Add any photos that you want to put into this collection.
-                    Press upload to add them to the collection.
+                    Press upload to add them to the collection. (Max 9MB total)
                   </DialogDescription>
                 </DialogHeader>
                 <div>
                   <Input
                     multiple={true}
+                    accept={"image/*,video/*"}
                     id="picture"
                     type="file"
                     onChange={(e) => setFilesSelected(e.target.files.length)}
@@ -247,22 +261,38 @@ export default function Page() {
             )}
             {currentCollectionData.capsules.map((capsule) => (
               <div
-              key={capsule.media}
-              className="relative aspect-video group rounded-xl bg-muted/50 overflow-hidden"
+                key={capsule.media}
+                className="relative aspect-video group rounded-xl bg-muted/50 overflow-hidden"
               >
-              <img
-                src={
-                "https://super-funicular-677w567j5vpcrgr6-8000.app.github.dev" +
-                capsule.media
-                }
-                loading="lazy"
-                className="w-full h-full object-cover rounded-xl"
-              />
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button className="p-1 bg-white rounded-full shadow">
-                <Heart className="w-6 h-6 text-red-500" />
-                </button>
-              </div>
+                {!capsule.media.includes(".mp4") && (
+                  <img
+                    src={
+                      "https://super-funicular-677w567j5vpcrgr6-8000.app.github.dev" +
+                      capsule.media
+                    }
+                    loading="lazy"
+                    className="w-full h-full object-cover rounded-xl"
+                  />
+                )}
+                {capsule.media.includes(".mp4") && (
+                  <video
+                    src={
+                      "https://super-funicular-677w567j5vpcrgr6-8000.app.github.dev" +
+                      capsule.media
+                    }
+                    className="w-full h-full object-cover rounded-xl"
+                    onMouseEnter={(e) => e.currentTarget.play()}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.pause();
+                      e.currentTarget.currentTime = 0;
+                    }}
+                  />
+                )}
+                {/* <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button className="p-1 bg-white rounded-full shadow">
+                    <Heart className="w-6 h-6 text-red-500" />
+                  </button>
+                </div> */}
               </div>
             ))}
           </div>
@@ -272,7 +302,8 @@ export default function Page() {
             <DialogHeader>
               <DialogTitle>Share link</DialogTitle>
               <DialogDescription>
-                Anyone who has this link will be able to view this. This link expires in one week.
+                Anyone who has this link will be able to view this. This link
+                expires in one week.
               </DialogDescription>
             </DialogHeader>
             <div className="flex items-center space-x-2">
@@ -303,6 +334,45 @@ export default function Page() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        <Sheet open={changeOpen} onOpenChange={setChangeOpen}>
+          <SheetContent side="left">
+            <SheetHeader>
+              <SheetTitle>Edit collection</SheetTitle>
+              <SheetDescription>
+                Make changes to your collection here. Click save when you're
+                done.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-4 py-4">
+              <label htmlFor="name" className="font-inter">
+                Trip Title
+              </label>
+              <Input
+                id="name"
+                value={changedName}
+                onChange={(e) => setChangedName(e.target.value)}
+              />
+              <br />
+              <label htmlFor="location" className="font-inter">
+                Trip Location
+              </label>
+              <Input
+                id="location"
+                value={changedLocation}
+                onChange={(e) => setChangedLocation(e.target.value)}
+              />
+              <label htmlFor="date" className="font-inter">
+                Trip Dates
+              </label>
+              <DatePickerWithRange />
+            </div>
+            <SheetFooter>
+              <SheetClose asChild>
+                <Button onClick={()=> alert("Sorry, this is a work in progress and therefore hasn't been made!")} type="submit">Save changes</Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       </SidebarInset>
     </SidebarProvider>
   );

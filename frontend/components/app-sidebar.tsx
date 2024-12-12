@@ -35,6 +35,14 @@ export function AppSidebar(props: any) {
         name: "Collection Settings",
         url: "#",
         icon: Cog,
+        clickCallback: (e: any) => {
+          e.preventDefault();
+          if ((props.currentCollection.uuid ?? undefined) === undefined) {
+            alert("Please select a collection first.");
+            return;
+          }
+          props.changeOpenChange(true);
+        },
       },
       {
         name: "Get Shareable Link",
@@ -42,6 +50,11 @@ export function AppSidebar(props: any) {
         icon: Share,
         clickCallback: async (e: any) => {
           e.preventDefault();
+          console.log(props.currentCollection.uuid ?? undefined);
+          if ((props.currentCollection.uuid ?? undefined) === undefined) {
+            alert("Please select a collection first.");
+            return;
+          }
           const response = await axios({
             method: "POST",
             url:
