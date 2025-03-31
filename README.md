@@ -4,5 +4,7 @@ Technologies:
 * SQlite DB
 * REST Authentication (OAuth with Google and Email/Password)
 * Shadcn/ui
+* NextJS frontend
+* Django backend
 
 Time taken for this project: 52.3 hours 
