@@ -3,7 +3,7 @@ Next js and Django application that I made for a shark tank project.
 I got first place!!
 
 Technologies:
-* SQlite DB; Althought in prod this would likely be PostgreSQL
+* SQlite DB; Although in prod this would likely be PostgreSQL
 * REST Authentication (OAuth with Google and Email/Password)
 * Shadcn/ui
 * NextJS frontend
